@@ -1,0 +1,8 @@
+Package: miniature-goggles
+Architecture: all
+Maintainer: Aaron Nies
+Depends: debconf (>= 0.5.00)
+Priority: optional
+Version: 0.5
+Description: My Simple backup script
+ This script provides an easy way of analyzing a bash command's memory use.
