@@ -27,23 +27,27 @@ FORMAT='vsz,rss,etimes'
 while getopts ":c:s:o:f:h" opt; do
   case $opt in
     c)
-      COMMAND=$opt
+      COMMAND=$OPTARG
       ;;
     s)
       SILENT=TRUE
       ;;
     o)
-      OUTPUT=$opt
+      OUTPUT=$OPTARG
       ;;
     f)
-      FORMAT=$opt
+      FORMAT=$OPTARG
       ;;
     h)
       echo $HELP
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
+      exit 1
       ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
   esac
 done
 
