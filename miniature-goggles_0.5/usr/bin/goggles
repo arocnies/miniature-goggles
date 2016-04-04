@@ -25,9 +25,10 @@ HELP="WIP"
 COMMAND=$1
 FORMAT='vsz,rss,etimes'
 INTERVAL=1
+SILENT=FALSE
 
 # Parse options
-while getopts ":c:s:o:f:i:h" opt; do
+while getopts ":c:so:f:i:h" opt; do
   case $opt in
     c)
       COMMAND=$OPTARG
@@ -60,10 +61,10 @@ done
 
 # Run the command and save the PID to a variable.
 CMD_PID=''
-if [ -z "$VAR" ]; then
+if [ $SILENT == 'FALSE' ]; then
     eval "(${COMMAND}) &"
 else
-    eval "(${COMMAND}) & > /dev/null"
+    eval "(${COMMAND}) > /dev/null &"
 fi
 CMD_PID=$!
 
