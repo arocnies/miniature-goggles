@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# TODO: Stdin pipes are piped into command.
+# TODO: Getops with options to specify the command, the output, no output, output format.
+
 #The user pipes a command into the system. The system calls that command and monitors it's mem, time, cpu (similar to top). The system outputs the usage in a table of text.
 #
 #The system must call arbitrary linux commands.
