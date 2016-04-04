@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # TODO: Stdin pipes are piped into command.
-# TODO: Getops with options to specify the command, the output, no output, output format.
+# TODO: Getops with options to specify the command, the output, no output, output format, option for interval.
 
 #The user pipes a command into the system. The system calls that command and monitors it's mem, time, cpu (similar to top). The system outputs the usage in a table of text.
 #
@@ -24,9 +24,10 @@ HELP="WIP"
 # Defaults
 COMMAND=$1
 FORMAT='vsz,rss,etimes'
+INTERVAL=1
 
 # Parse options
-while getopts ":c:s:o:f:h" opt; do
+while getopts ":c:s:o:f:i:h" opt; do
   case $opt in
     c)
       COMMAND=$OPTARG
@@ -39,6 +40,9 @@ while getopts ":c:s:o:f:h" opt; do
       ;;
     f)
       FORMAT=$OPTARG
+      ;;
+    i)
+      INTERVAL=$OPTARG
       ;;
     h)
       echo $HELP
@@ -56,7 +60,11 @@ done
 
 # Run the command and save the PID to a variable.
 CMD_PID=''
-eval "(${COMMAND}) &"
+if [ -z "$VAR" ]; then
+    eval "(${COMMAND}) &"
+else
+    eval "(${COMMAND}) & > /dev/null"
+fi
 CMD_PID=$!
 
 trap "kill ${CMD_PID} 2> /dev/null" EXIT # If this script is killed, kill the command.
@@ -65,10 +73,10 @@ top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}' # Outpu
 COUNT=0
 while kill -0 ${CMD_PID} 2> /dev/null; do # Monitor loop while proc is running.
     if [[ $COUNT == 0 ]]; then
-        ps -o vsz,rss,etimes ${CMD_PID}
+        ps -o $FORMAT ${CMD_PID}
     else
-        ps -o vsz=,rss=,etimes= ${CMD_PID}
+        ps -o $FORMAT --no-headers ${CMD_PID}
     fi
-    sleep 1
+    sleep $INTERVAL
     ((COUNT++))
 done
