@@ -19,27 +19,44 @@
 #OUTPUT:
 #PID,CMD,CPU,MEM,TIME
 
-# Run the command and save the PID to a variable.
+# Defaults
 COMMAND=$1
+FORMAT='vsz,rss,etimes'
+
+# Parse options
+while getopts ":c:s:o:f:h" opt; do
+  case $opt in
+    c)
+      COMMAND=$opt
+      ;;
+    s)
+      SILENT=TRUE
+      ;;
+    o)
+      OUTPUT=$opt
+      ;;
+    f)
+      FORMAT=$opt
+      ;;
+    h)
+      echo $HELP
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      ;;
+  esac
+done
+
+# Run the command and save the PID to a variable.
 CMD_PID=''
 eval "(${COMMAND}) &"
 CMD_PID=$!
 
-# If this script is killed, kill the command.
-trap "kill ${CMD_PID} 2> /dev/null" EXIT
+trap "kill ${CMD_PID} 2> /dev/null" EXIT # If this script is killed, kill the command.
+top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}' # Output PID and command
 
-# Output PID and command
-top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}'
-#echo $CMD_PID,\"$COMMAND\"
-
-# Monitor loop while proc is running.
 COUNT=0
-while kill -0 ${CMD_PID} 2> /dev/null; do
-
-#    echo ------
-#    pgrep -P $$
-#    echo ------
-#    top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s,%s,%s\n",$11,$10,$9}'
+while kill -0 ${CMD_PID} 2> /dev/null; do # Monitor loop while proc is running.
     if [[ $COUNT == 0 ]]; then
         ps -o vsz,rss,etimes ${CMD_PID}
     else
