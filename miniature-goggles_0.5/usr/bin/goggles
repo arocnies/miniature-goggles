@@ -19,6 +19,8 @@
 #OUTPUT:
 #PID,CMD,CPU,MEM,TIME
 
+HELP="WIP"
+
 # Defaults
 COMMAND=$1
 FORMAT='vsz,rss,etimes'
@@ -40,6 +42,7 @@ while getopts ":c:s:o:f:h" opt; do
       ;;
     h)
       echo $HELP
+      exit 0
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
