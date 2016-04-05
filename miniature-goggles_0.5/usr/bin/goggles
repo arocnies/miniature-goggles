@@ -22,7 +22,8 @@
 HELP="WIP"
 
 # Defaults
-COMMAND=$1
+for lastArg; do true; done # Get last argument.
+COMMAND=$lastArg
 FORMAT='vsz,rss,etimes'
 INTERVAL=1
 SILENT=FALSE
@@ -69,7 +70,7 @@ fi
 CMD_PID=$!
 
 trap "kill ${CMD_PID} 2> /dev/null" EXIT # If this script is killed, kill the command.
-top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}' # Output PID and command
+top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}' # Output PID and command.
 
 COUNT=0
 while kill -0 ${CMD_PID} 2> /dev/null; do # Monitor loop while proc is running.
