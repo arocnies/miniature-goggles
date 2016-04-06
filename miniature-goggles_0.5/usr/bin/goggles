@@ -82,7 +82,7 @@ done
 # Run the command and save the PID to a variable.
 CMD_PID=''
 if [ $SILENT == 'FALSE' ]; then
-    eval "(${COMMAND}) &"
+    eval "(${COMMAND}) < /dev/stdin &"
 else
     eval "(${COMMAND}) > /dev/null &"
 fi
