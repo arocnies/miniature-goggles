@@ -19,6 +19,20 @@
 #OUTPUT:
 #PID,CMD,CPU,MEM,TIME
 
+# BEHAVIOR:
+# 1) pipes:
+# foo | CMD | bar
+# foo | goggles -o output.txt CMD | bar
+# 2) solo
+# goggles CMD
+#
+# If there is OUTPUT and no VERBOSE flag, don't use stdout
+# If there is no output, use stdout
+# Output defaults to stdout but is overridden by -o.
+#
+# SILENT = no CMD output to stdout.
+# VERBOSE = goggle output is sent to stdout.
+
 HELP="WIP"
 
 # Defaults
@@ -26,19 +40,24 @@ for lastArg; do true; done # Get last argument.
 COMMAND=$lastArg
 FORMAT='vsz,rss,etimes'
 INTERVAL=1
+VERBOSE=FALSE
 SILENT=FALSE
+OUTPUT=""
 
 # Parse options
-while getopts ":c:so:f:i:h" opt; do
+while getopts ":c:vso:f:i:h" opt; do
   case $opt in
     c)
       COMMAND=$OPTARG
+      ;;
+    v)
+      VERBOSE=TRUE
       ;;
     s)
       SILENT=TRUE
       ;;
     o)
-      OUTPUT=$OPTARG
+      OUTPUT="$OPTARG"
       ;;
     f)
       FORMAT=$OPTARG
@@ -70,14 +89,26 @@ fi
 CMD_PID=$!
 
 trap "kill ${CMD_PID} 2> /dev/null" EXIT # If this script is killed, kill the command.
-top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}' # Output PID and command.
+if [ -z "$OUTPUT" ]; then
+    top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}'
+else
+    `top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}' > $OUTPUT`
+fi
 
 COUNT=0
 while kill -0 ${CMD_PID} 2> /dev/null; do # Monitor loop while proc is running.
     if [[ $COUNT == 0 ]]; then
-        ps -o $FORMAT ${CMD_PID}
+        if [ -z "$OUTPUT" ]; then
+            eval "ps -o $FORMAT ${CMD_PID}"
+        else
+            eval "ps -o $FORMAT ${CMD_PID} >> $OUTPUT"
+        fi
     else
-        ps -o $FORMAT --no-headers ${CMD_PID}
+        if [ -z "$OUTPUT" ]; then
+            eval "ps -o $FORMAT --no-headers ${CMD_PID}"
+        else
+            eval "ps -o $FORMAT --no-headers ${CMD_PID} >> $OUTPUT"
+        fi
     fi
     sleep $INTERVAL
     ((COUNT++))
