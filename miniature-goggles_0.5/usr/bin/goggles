@@ -13,33 +13,33 @@ function usage {
 
 # Defaults
 for lastArg; do true; done # Get last argument.
-COMMAND=$lastArg
-FORMAT='vsz,rss,etimes'
-INTERVAL=1
-VERBOSE=FALSE
-SILENT=FALSE
-OUTPUT=""
+command=$lastArg
+format='vsz,rss,etimes'
+interval=1
+verbose=FALSE
+silent=FALSE
+outfile=""
 
 # Parse options
 while getopts ":c:vso:f:i:h" opt; do
   case $opt in
     c)
-      COMMAND=$OPTARG
+      command=$OPTARG
       ;;
     v)
-      VERBOSE=TRUE
+      verbose=TRUE
       ;;
     s)
-      SILENT=TRUE
+      silent=TRUE
       ;;
     o)
-      OUTPUT="$OPTARG"
+      outfile="$OPTARG"
       ;;
     f)
-      FORMAT=$OPTARG
+      format=$OPTARG
       ;;
     i)
-      INTERVAL=$OPTARG
+      interval=$OPTARG
       ;;
     h)
       usage
@@ -55,36 +55,36 @@ while getopts ":c:vso:f:i:h" opt; do
 done
 
 # Run the command and save the PID to a variable.
-CMD_PID=''
-if [ $SILENT == 'FALSE' ]; then
-    eval "(${COMMAND}) < /dev/stdin &"
+commandPID=''
+if [ $silent == 'FALSE' ]; then
+    eval "(${command}) < /dev/stdin &"
 else
-    eval "(${COMMAND}) > /dev/null &"
+    eval "(${command}) > /dev/null &"
 fi
-CMD_PID=$!
+commandPID=$!
+trap "kill ${commandPID} 2> /dev/null" EXIT # If this script is killed, kill the command.
 
-trap "kill ${CMD_PID} 2> /dev/null" EXIT # If this script is killed, kill the command.
-if [ -z "$OUTPUT" ]; then
-    top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}'
+if [ -z "$outfile" ]; then
+    top -p ${commandPID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}'
 else
-    `top -p ${CMD_PID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}' > $OUTPUT`
+    `top -p ${commandPID} -n 1 -b | tail -fn 1 | awk '{printf "%s %s\n",$1,$12}' > $outfile`
 fi
 
-COUNT=0
-while kill -0 ${CMD_PID} 2> /dev/null; do # Monitor loop while proc is running.
-    if [[ $COUNT == 0 ]]; then
-        if [ -z "$OUTPUT" ]; then
-            eval "ps -o $FORMAT ${CMD_PID}"
+count=0
+while kill -0 ${commandPID} 2> /dev/null; do # Monitor loop while proc is running.
+    if [[ $count == 0 ]]; then
+        if [ -z "$outfile" ]; then
+            eval "ps -o $format ${commandPID}"
         else
-            eval "ps -o $FORMAT ${CMD_PID} >> $OUTPUT"
+            eval "ps -o $format ${commandPID} >> $outfile"
         fi
     else
-        if [ -z "$OUTPUT" ]; then
-            eval "ps -o $FORMAT --no-headers ${CMD_PID}"
+        if [ -z "$outfile" ]; then
+            eval "ps -o $format --no-headers ${commandPID}"
         else
-            eval "ps -o $FORMAT --no-headers ${CMD_PID} >> $OUTPUT"
+            eval "ps -o $format --no-headers ${commandPID} >> $outfile"
         fi
     fi
-    sleep $INTERVAL
-    ((COUNT++))
+    sleep $interval
+    ((count++))
 done
