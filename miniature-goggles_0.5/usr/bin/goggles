@@ -1,39 +1,15 @@
 #!/usr/bin/env bash
 
-# TODO: Stdin pipes are piped into command.
-# TODO: Getops with options to specify the command, the output, no output, output format, option for interval.
-
-#The user pipes a command into the system. The system calls that command and monitors it's mem, time, cpu (similar to top). The system outputs the usage in a table of text.
-#
-#The system must call arbitrary linux commands.
-#The system must be aware of the mem usage of the call.
-#The system must be aware of the cpu usage of the call.
-#The system must be aware of the runtime usage of the call.
-#The system must log the above resources at regular intervals.
-#
-#Bash:
-#Run the command and get the PID.
-#Every interval, get the ps aux line for that PID
-#COMMAND:
-#top -p PID -n 1 -b | tail -fn 1 | awk '{printf "%s,%s,%s,%s,%s\n",$1,$12,$9,$10,$11}'
-#OUTPUT:
-#PID,CMD,CPU,MEM,TIME
-
-# BEHAVIOR:
-# 1) pipes:
-# foo | CMD | bar
-# foo | goggles -o output.txt CMD | bar
-# 2) solo
-# goggles CMD
-#
-# If there is OUTPUT and no VERBOSE flag, don't use stdout
-# If there is no output, use stdout
-# Output defaults to stdout but is overridden by -o.
-#
-# SILENT = no CMD output to stdout.
-# VERBOSE = goggle output is sent to stdout.
-
-HELP="WIP"
+function usage {
+    echo "usage: goggles [-hs] [-f ps format] [-o outfile] [-i interval] ([-c command] OR command)"
+    echo "	-h help		display help"
+    echo "	-s silent	command will not output to stdout"
+    echo "	-f format	specify ps format for goggles output"
+    echo "	-o outfile	specify output file"
+    echo "	-i interval	specify interval in seconds"
+    echo "	-c command	specify command (defaults to last argument)"
+    exit 1
+}
 
 # Defaults
 for lastArg; do true; done # Get last argument.
@@ -66,8 +42,7 @@ while getopts ":c:vso:f:i:h" opt; do
       INTERVAL=$OPTARG
       ;;
     h)
-      echo $HELP
-      exit 0
+      usage
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
