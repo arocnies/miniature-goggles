@@ -3,6 +3,7 @@ version="0.5"
 
 # Build man page
 ronn goggles.1.ronn
+mkdir -p miniature-goggles_$version/usr/local/share/man/man1/
 mv goggles.1 miniature-goggles_$version/usr/local/share/man/man1/
 
 # Build and install .deb
