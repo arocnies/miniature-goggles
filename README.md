@@ -1,6 +1,8 @@
 # miniature-goggles
 A command used to analyze Linux processes.
 
+Site: [http://arocnies.github.io/miniature-goggles/](http://arocnies.github.io/miniature-goggles/)
+
 ## Usage
 
 
