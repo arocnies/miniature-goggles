@@ -1,15 +1,8 @@
 # miniature-goggles
-A command used to analyze Linux processes.
+A process analysis tool for Bash.
 
 Site: [http://arocnies.github.io/miniature-goggles/](http://arocnies.github.io/miniature-goggles/)
 
-## Usage
+## How to build goggles:
+Navigate to the project's root directory and run `buildInstall.sh`.
 
-
-## Package
-To package miniature-goggles, navigate to the project's root directory and run the following commands:
-`dpkg-deb --build miniature-goggles_0.5`
-
-## Install
-To install miniature-goggles, navigate to the project's root directory and run the following commands:
-`dpkg -i miniature-goggles_0.5.deb`
