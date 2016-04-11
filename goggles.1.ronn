@@ -63,7 +63,7 @@ goggles(1) supports all ps(1) format descriptors including AIX format descriptor
 
 The following descriptor table is taken from the ps(1) man page:
 
-CODE        HEADER    DESCRIPTION
+       CODE        HEADER    DESCRIPTION
 
        %cpu        %CPU      cpu utilization of the process in "##.#" format.  Currently, it is the CPU time used divided 
                              by the time the process has been running (cputime/realtime ratio), expressed as a percentage.
