@@ -27,6 +27,9 @@ Linux pipes can be used with goggles(1) to analyze processes with input or outpu
 To analyze a process; only displaying goggle measurement output:
 goggles -s <command>
 
+To analyze a process's per-milla cpu usage (tenths of a percent), virtual memory size, and elapse time:
+goggles -sf cp,vsz,etime <command>
+
 To analyze a process with piped input; only displaying goggle measurement output:
 <command> | goggles -s <command>
 
