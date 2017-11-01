@@ -23,12 +23,17 @@ Navigate to the project's root directory and run `buildInstall.sh`.
 ## DESCRIPTION
 
 goggles(1) is a program that is used to analyze a process and output the data in a graph friendly manner.
-
-goggles(1) fills a need left over from top(1) and ps(1) by providing repetitive updates on process information that is also suitable for review of the process or comparison to other processes.
-
-At a set interval (default of 1 second), goggles(1) retrieves process information using the ps(1) command. goggles(1) accepts all ps(1) format descriptors including AIX format descriptors and ps(1) NORMAL format descriptors. NOTE: For processes that exit soon after starting, goggles may not be able to analyze the process due to the process ending before the first measurement can be taken.
-
-Linux pipes can be used with goggles(1) to analyze processes with input or output. Input piped into goggles(1) will be sent to the process goggles(1) is analyzing. Piping output from goggles(1) will by default send both goggles(1) measurements and the process output through the pipe. The process output can be silenced using the `-s` option, which is useful for measuring commands quickly in the terminal. The measurement data from goggles(1) can be redirected to an outfile using the `-o` option.
+goggles(1) fills a need left over from top(1) and ps(1) by providing repetitive updates on process information that is 
+also suitable for review of the process or comparison to other processes.
+At a set interval (default of 1 second), goggles(1) retrieves process information using the ps(1) command. goggles(1) 
+accepts all ps(1) format descriptors including AIX format descriptors and ps(1) NORMAL format descriptors. NOTE: For 
+processes that exit soon after starting, goggles may not be able to analyze the process due to the process ending 
+before the first measurement can be taken.
+Linux pipes can be used with goggles(1) to analyze processes with input or output. Input piped into goggles(1) will be 
+sent to the process goggles(1) is analyzing. Piping output from goggles(1) will by default send both goggles(1) 
+measurements and the process output through the pipe. The process output can be silenced using the `-s` option, which 
+is useful for measuring commands quickly in the terminal. The measurement data from goggles(1) can be redirected to an 
+outfile using the `-o` option.
 
 ## EXAMPLES
 
@@ -398,7 +403,6 @@ The following descriptor table is taken from the ps(1) man page:
 
        wchan       WCHAN     name of the kernel function in which the process is sleeping, a "-" if the process is running,
                              or a "*" if the process is multi-threaded and ps is not displaying threads.
-
 
 ## AUTHOR
 
